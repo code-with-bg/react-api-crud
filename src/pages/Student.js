@@ -4,35 +4,50 @@ import axios from 'axios';
 import Loading from '../components/loading.js';
 
 function Student() {
-  const [loading, setLoading] = useState([]);
+  const [loading, setLoading] = useState(true); // Initialize loading as true
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
-    axios.get('https://reqres.in/api/users').then((res) => {
-      console.log(res);
-      setStudents(res.data.data); // Use res.data.data to access the array of students
-      setLoading(false);
-    });
+    axios.get('http://127.0.0.1:8000/api/users/')
+      .then((res) => {
+        console.log(res);
+        setStudents(res.data.data); // Use res.data.data to access the array of students
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false); // Set loading to false in case of an error
+      });
   }, []);
 
-  if(loading){
-     return(
-        // <div>loading...</div>
-        <Loading/>
-     )
+  const deleteStudent = (id) => {
+    axios.delete(`http://127.0.0.1:8000/api/users/${id}`)
+      .then((res) => {
+        alert(res.data.message);
+        // Remove the deleted student from the students array
+        setStudents((prevStudents) => prevStudents.filter((student) => student.id !== id));
+      })
+      .catch((error) => {
+        console.error(error);
+        alert(error.response.data.message);
+      });
+  }
+
+  if (loading) {
+    return <Loading />;
   }
 
   const studentDetails = students.map((item) => (
     <tr key={item.id}>
       <td>{item.id}</td>
       <td>{item.email}</td>
-      <td>{item.first_name} {item.last_name}</td>
-      <td><img src={item.avatar} alt="Student Avatar" /></td>
+      <td>{item.name}</td>
       <td>
-        <Link to="/" className="btn btn-success">Edit</Link>
+        <Link to={`/studentlist/${item.id}/edit`} className="btn btn-success">Edit</Link>
       </td>
       <td>
-        <button className="btn btn-danger">Delete</button>
+        {/* Pass the student ID to the deleteStudent function */}
+        <button type="button" onClick={() => deleteStudent(item.id)} className="btn btn-danger">Delete</button>
       </td>
     </tr>
   ));
@@ -41,8 +56,8 @@ function Student() {
     <div className="container mt-5">
       <div className="row">
         <div className="col-md-12">
-          <div className="card-header">
-            <div className="card">
+          <div className="card">
+            <div className="card-header">
               <h2>
                 Student List{' '}
                 <Link to="/studentlist/create" className="btn btn-primary float-end m-2">
@@ -57,7 +72,6 @@ function Student() {
                     <th>ID</th>
                     <th>Email</th>
                     <th>Name</th>
-                    <th>Avatar</th>
                     <th>Edit</th>
                     <th>Delete</th>
                   </tr>

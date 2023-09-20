@@ -4,8 +4,8 @@ function Loading(){
         <div className="container mt-3">
         <div className="spinner-border text-primary" role="status">
         <span className="visually-hidden">Loading... Please wait.</span>
-      </div>
-      </div>
+        </div>
+        </div>
      )
 }
 export default Loading;
