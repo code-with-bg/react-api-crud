@@ -9,10 +9,6 @@ import Navbar from './components/navbar.js';
 function App() {
   return (
     <div>
-      {/* <Link to="/">Home</Link>
-      <Link to="/about-us">About</Link>
-      <Link to="/contact-us">Contact</Link> */}
-    {/* <Home/> */}
     <Navbar/> 
     <MyRouter/>
     </div>

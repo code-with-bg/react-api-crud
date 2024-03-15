@@ -8,7 +8,7 @@ function Student() {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/users/')
+    axios.get('http://127.0.0.1:8000/api/students/')
       .then((res) => {
         console.log(res);
         setStudents(res.data.data); // Use res.data.data to access the array of students
@@ -21,9 +21,11 @@ function Student() {
   }, []);
 
   const deleteStudent = (id) => {
-    axios.delete(`http://127.0.0.1:8000/api/users/${id}`)
+    const confirmDelete = window.confirm("Are you sure you want to delete the data?");
+   if(confirmDelete){
+    axios.delete(`http://127.0.0.1:8000/api/students/${id}`)
       .then((res) => {
-        alert(res.data.message);
+        // alert(res.data.message);
         // Remove the deleted student from the students array
         setStudents((prevStudents) => prevStudents.filter((student) => student.id !== id));
       })
@@ -31,6 +33,8 @@ function Student() {
         console.error(error);
         alert(error.response.data.message);
       });
+    }
+
   }
 
   if (loading) {
@@ -40,8 +44,18 @@ function Student() {
   const studentDetails = students.map((item) => (
     <tr key={item.id}>
       <td>{item.id}</td>
-      <td>{item.email}</td>
       <td>{item.name}</td>
+      <td>{item.email}</td>
+      <td>{item.phone}</td>
+      <td>{item.address}</td>
+      <td>
+  <img 
+    src={"http://127.0.0.1:8000/uploads/students/" + item.image} 
+    alt={item.image} 
+    width={'100px'} 
+    height={'100px'}
+  />
+</td>
       <td>
         <Link to={`/studentlist/${item.id}/edit`} className="btn btn-success">Edit</Link>
       </td>
@@ -70,8 +84,11 @@ function Student() {
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Email</th>
                     <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Image</th>
                     <th>Edit</th>
                     <th>Delete</th>
                   </tr>
